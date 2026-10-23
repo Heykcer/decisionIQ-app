@@ -5,7 +5,7 @@ import Toast from "./Toast"
 import LandingPage from "./LandingPage"
 import AuthPage from "./AuthPage"
 
-const API_BASE = import.meta.env.VITE_API_URL
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000/api"
 
 
 export default function DecisionJournalApp() {

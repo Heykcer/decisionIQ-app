@@ -1,6 +1,7 @@
 # decisions/urls.py
 from django.urls import path
 from .views import (
+    health_check,
     RegisterView,
     me,
     update_me,
@@ -9,6 +10,7 @@ from .views import (
 )
 
 urlpatterns = [
+    path("health/", health_check, name="health_check"),
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("me/", me, name="me"),
     path("me/update/", update_me, name="me_update"),

@@ -33,32 +33,42 @@ export default function ProfileSection({
   }, [user])
 
   const handleSaveProfile = async () => {
-  try {
-    const token = window.localStorage.getItem("token") || ""
-    const res = await fetch("http://localhost:8000/api/me/update/", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        username: nameInput,
-        email: emailInput,
-      }),
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      console.error("Profile update failed", data)
-      return
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api"
+      const token = window.localStorage.getItem("token") || ""
+      const res = await fetch(`${apiBase}/me/update/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: nameInput,
+          email: emailInput,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        let msg = "Profile update failed."
+        if (data?.username) {
+          msg = Array.isArray(data.username) ? data.username.join(" ") : data.username
+        } else if (data?.email) {
+          msg = Array.isArray(data.email) ? data.email.join(" ") : data.email
+        } else if (data?.detail) {
+          msg = data.detail
+        }
+        alert(msg)
+        return
+      }
+      if (onProfileUpdated) {
+        onProfileUpdated(data)
+      }
+      setEditing(false)
+    } catch (err) {
+      console.error("Profile update error", err)
+      alert("Network error updating profile.")
     }
-    if (onProfileUpdated) {
-      onProfileUpdated(data)
-    }
-    setEditing(false)
-  } catch (err) {
-    console.error("Profile update error", err)
   }
-}
 
   // --- end editable profile state ---
 
